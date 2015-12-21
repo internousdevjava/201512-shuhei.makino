@@ -1,225 +1,322 @@
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+public class KisoKadai3 {
 
-class SSample14_1 extends JFrame {
-
-	JTextArea area;
-	JTextField filemei;
-
-	public static void main(String args[]) {
-		SSample14_1 frame = new SSample14_1("タイトル");
-		frame.setVisible(true);
-
-
-
-	}
-
-	SSample14_1(String title) {
-		setTitle(title);
-		setBounds(100, 500, 400, 500);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		JPanel p = new JPanel(); // パネル作成
-
-		area = new JTextArea();
-		area.setLineWrap(true);
-		JScrollPane scrollpane = new JScrollPane(area);
-		scrollpane.setPreferredSize(new Dimension(200, 120));// テキストエリア
-
-		p.add(scrollpane);
-
-		JPanel bottomp = new JPanel();
-
-		filemei= new JTextField(10);
-
-
-		JButton button1 = new JButton("追加");
-		button1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-								area.append(filemei.getText());
-
+	public static void main(String[] args) throws IOException {
+		while (true) {
+			System.out.println("--開始--");
+			System.out.println("ファイル,フォルダ関連は1. 読み込みは2. 書き込みは3.作業を終了します。9.");
+			String str;
+			String file_name;
+			String file_kizonn;
+			String folder_name;
+			String write;
+			int n = 0;
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			str = br.readLine();
+			if (str.matches("^[0-9]*$")) {
+				n = Integer.parseInt(str);
+			} else {
+				System.out.println("半角数字で入力して下さい");
 			}
-		});
+			// ①－①ファイル作成
+			if (n == 1) {
+				while (true) {
 
-
-		JButton button3 = new JButton("ファイル作成");
-		button3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				File newfile = new File("C:/aaa/test4.txt");
-				// ファイルが存在するかどうかを判定
-				if (newfile.exists()) {
-					System.out.println("そのファイルは既に存在");
-					return;
-				}
-
-				try {
-					if (newfile.createNewFile()) {
-						// ファイルの作成に成功
-						String path = newfile.getPath();
-						System.out.println(path + "を作成");
+					int n1 = 0;
+					System.out.println("選択してください, 1.ファイル作成 2.ファイル削除 3.フォルダ作成 4.フォルダ削除" + " 5.メニューに戻る");
+					BufferedReader br01 = new BufferedReader(new InputStreamReader(System.in));
+					str = br01.readLine();
+					if (str.matches("^[0-9]*$")) {
+						n1 = Integer.parseInt(str);
 					} else {
-						// ファイルの作成に失敗
-						System.out.println("ファイルの作成に失敗");
+						System.out.println("半角数字で入力して下さい");
+					}
+					// メニュー選択11
+
+					if (n1 == 1) {
+						System.out.println("新しいファイル名を書いてください。");
+						BufferedReader br1 = new BufferedReader(new InputStreamReader(System.in));
+						file_name = br1.readLine();
+						File newfile = new File(file_name + ".txt");
+						// ファイルが存在するかどうかを判定
+						try {
+							if (newfile.exists()) {
+								System.out.println("そのファイルは既に存在");
+								continue;
+							} else {
+								System.out.println("ファイルを作成します。" + newfile.getAbsolutePath());
+								try {
+									if (newfile.createNewFile()) {
+										// ファイルの作成に成功
+										String path = newfile.getPath();
+										System.out.println(path + "を作成");
+									} else {
+										// ファイルの作成に失敗
+										System.out.println("ファイルの作成に失敗");
+									}
+
+								} catch (IOException e) {
+									// 例外処理
+									System.out.println(e);
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						continue;
+					}
+
+					// ①-②ファイル削除
+					else if (n1 == 2) {
+						System.out.println("削除するファイル名を書いてください。");
+						BufferedReader br2 = new BufferedReader(new InputStreamReader(System.in));
+						file_name = br2.readLine();
+						if ("file_name".length() == 0) {
+							System.out.println("パラメータが未指定");
+
+						}
+
+						// Fileクラスをインスタンス化
+						File deletefile = new File(file_name + ".txt");
+
+						if (!deletefile.exists()) {
+							// ファイルが存在しない場合は処理終了
+							System.out.println("ファイルが存在しない");
+							continue;
+						}
+
+						if (deletefile.delete()) {
+							System.out.println("ファイルの削除に成功");
+							continue;
+						} else {
+							System.out.println("ファイルの削除に失敗");
+							continue;
+						}
+					}
+
+					// ①-③フォルダ作成
+
+					else if (n1 == 3) {
+						System.out.println("新しいフォルダー名を書いてください。");
+						BufferedReader br3 = new BufferedReader(new InputStreamReader(System.in));
+						folder_name = br3.readLine();
+						File newfile = new File(folder_name);
+						// ファイルが存在するかどうかを判定
+						try {
+							if (newfile.exists()) {
+								System.out.println("そのフォルダーは既に存在");
+								continue;
+							} else {
+								System.out.println("フォルダーを作成します。" + newfile.getAbsolutePath());
+
+								try {
+									if (newfile.createNewFile()) {
+										// ファイルの作成に成功
+										String path = newfile.getPath();
+										System.out.println(path + "を作成");
+									} else {
+										// ファイルの作成に失敗
+										System.out.println("フォルダーの作成に失敗");
+									}
+
+								} catch (IOException e) {
+									// 例外処理
+									System.out.println(e);
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						continue;
+					}
+					// ①-④フォルダ削除
+					else if (n1 == 4) {
+						System.out.println("削除するフォルダ名を書いてください。");
+						BufferedReader br4 = new BufferedReader(new InputStreamReader(System.in));
+						folder_name = br4.readLine();
+						if ("folder_name".length() == 0) {
+							System.out.println("パラメータが未指定");
+							return;
+						}
+
+						// Fileクラスをインスタンス化
+						File deletefile = new File(folder_name);
+
+						if (!deletefile.exists()) {
+							// ファイルが存在しない場合は処理終了
+							System.out.println("フォルダが存在しない");
+							continue;
+						}
+
+						if (deletefile.delete()) {
+							System.out.println("フォルダの削除に成功");
+							continue;
+						} else {
+							System.out.println("フォルダの削除に失敗");
+							continue;
+						}
+					} else if (n1 == 5) {
+						System.out.println("開始に戻ります。");
+						break;
+					} else {
+						System.out.println("選択し以外の数字は入れないでください");
+						continue;
+					}
+
+				}
+				continue;
+			}
+			// ②読み込み
+			else if (n == 2) {
+				while (true) {
+					int n2 = 0;
+					System.out.println("選択してください, 1.読み込み 2.メニューに戻る。");
+					BufferedReader br01 = new BufferedReader(new InputStreamReader(System.in));
+					str = br01.readLine();
+					if (str.matches("^[0-9]*$")) {
+						n2 = Integer.parseInt(str);
+					} else {
+						System.out.println("半角数字で入力して下さい");
+					}
+					if (n2 == 1) {
+						System.out.println("読み込むためのファイル名を書いてください。");
+						BufferedReader br5 = new BufferedReader(new InputStreamReader(System.in));
+						file_kizonn = br5.readLine();
+						File file2 = new File(file_kizonn + ".txt");
+						if (("0".equals(file_kizonn+".txt"))) {
+							continue;
+						} // ファイル・ディレクトリの判別
+						if (!file2.exists()) {
+							System.out.println("ファイルが見つかりません");
+							continue;
+						}
+
+						else if (!file2.isFile()) {
+							// ディレクトリを指定した場合は処理終了
+							System.out.println("ファイル以外を指定");
+							continue;
+						}
+
+						// ファイルが読み込み可能かどうかを判定
+						else if (!file2.canRead()) {
+							// ファイルが読み込み不可の場合は処理終了
+							System.out.println("ファイルが読み込み不可");
+							continue;
+						}
+
+						try {
+							List<String> lines = Files.readAllLines(Paths.get(file_kizonn + ".txt"),
+									StandardCharsets.UTF_8);
+							for (String line : lines) {
+								System.out.println(line);
+							}
+
+						} catch (FileNotFoundException e) {
+							System.out.println(e);
+
+						}
+
+					}
+
+					else if (n == 2) {
+						break;
+					}
+
+				}
+			}
+
+			// ③書き込み
+			else if(n==3){
+				System.out.println("書き込むファイル名を指定して下さい,[0]:メニューに戻る");
+				try{
+					BufferedReader br02=new BufferedReader(new InputStreamReader(System.in));
+					file_name=br02.readLine();
+					if(("0".equals(file_name + ".txt"))){
+						continue;
+						}//ファイル・ディレクトリの判別
+					File file = new File(file_name + ".txt");
+					if(!file.exists()){
+						System.out.println("ファイルが見つかりません");
+						continue;
+					}if (file.isDirectory()) {
+						System.out.println("ファイルでなく、ディレクトリが選択されています。");
+						continue;
+					}
+					System.out.println(file_name+".txt"+"に書き込みます。");
+					System.out.println("1.上書き,2.追記,3.メニューに戻る");
+					BufferedReader br6=new BufferedReader(new InputStreamReader(System.in));
+					str=br6.readLine();
+					int num=0;
+					if(("0".equals(str))){
+						continue;
+						};
+					if(str.matches("^[0-9]*$")){
+						num=Integer.parseInt(str);
+					}else{
+						System.out.println("半角数字で入力して下さい");
+					}
+					//上書き処理
+					if(num==1){
+						try{
+							System.out.println("書き込む内容を入力して下さい,[0]:メニューに戻る");
+							PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(file,false)));
+							BufferedReader br7=new BufferedReader(new InputStreamReader(System.in));
+							write=br7.readLine();
+							if("0".equals(write)){
+								continue;
+							}
+							pw.println(write);
+							pw.close();
+							System.out.println("上書きが完了しました");
+						}catch (IOException e) {
+							System.out.println(e);//例外エラー
+						}
+						//追記処理
+					}else if(num==2){
+						try{
+							System.out.println("書き込む内容を入力して下さい,[0]:メニューに戻る");
+							PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(file,true)));
+							BufferedReader br7=new BufferedReader(new InputStreamReader(System.in));
+							write=br7.readLine();
+							if("0".equals(write)){
+								continue;
+							}
+							pw.println(write);
+							pw.close();
+							System.out.println("追記が完了しました");
+						}catch (IOException e) {
+							System.out.println(e);//例外エラー
+						}
+					}else{
+						System.out.println("メニューに表示されている数値から選択して下さい");
+						continue;
 					}
 				} catch (IOException e) {
-					// 例外処理
-					System.out.println(e);
-
-				}
-
-
-			}
-		});
-		JButton button4 = new JButton("ファイル削除");
-		button4.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				  if ( "test4".length() == 0 ) {
-			            System.out.println( "パラメータが未指定" );
-			            return;
-			        }
-
-			        // Fileクラスをインスタンス化
-			        File deletefile = new File("C:/aaa/test4.txt");
-
-
-				if ( !deletefile.exists() ) {
-		            // ファイルが存在しない場合は処理終了
-		            System.out.println( "ファイルが存在しない" );
-		            return;
-		        }
-
-		        if ( deletefile.delete() ) {
-		            System.out.println( "ファイルの削除に成功" );
-		        }else{
-		            System.out.println( "ファイルの削除に失敗" );
-		        }
-
-			}
-		});
-		JButton button5 = new JButton("コンソールに文字出力");
-		button5.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				File file = new File("C:/aaa/test4.txt");
-
-				// 指定されたパスがファイルかどうかを判定
-				if (!file.isFile()) {
-					// ディレクトリを指定した場合は処理終了
-					System.out.println("ファイル以外を指定");
-					return;
-				}
-
-				// ファイルが読み込み可能かどうかを判定
-				if (!file.canRead()) {
-					// ファイルが読み込み不可の場合は処理終了
-					System.out.println("ファイルが読み込み不可");
-					return;
-				}
-
-				try {
-					List<String>lines
-						=Files.readAllLines(Paths.get("C:/aaa/test4"+".txt"),
-								StandardCharsets.UTF_8);
-					for(String line:lines){
-						System.out.println(line);
-					}
-
-				} catch (FileNotFoundException ex) {
-					System.out.println(ex);
-				} catch (IOException ex) {
-					System.out.println(ex);
+				System.out.println(e);
 				}
 			}
 
-
-
-		});
-
-		JButton button6 = new JButton("ディレクトリ作成");
-		button6.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				 File newfile = new File("C:/aaa/temp3");
-
-				    if (newfile.mkdirs()){
-				      System.out.println("ディレクトリの作成に成功しました");
-				    }else{
-				      System.out.println("ディレクトリの作成に失敗しました");
-				    }
-				  }
-		});
-		JButton button7 = new JButton("テキストの文字表示");
-		button7.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent e) {
-				String data="";
-				try{
-					//ファイルから読み込む仕組みを作成
-					BufferedReader br =new BufferedReader(new FileReader
-							("C:/aaa/test4"+".txt"));
-					String temp="";
-					while((temp=br.readLine())!=null){
-						data+=temp+"\n";
-					}
-					br.close();
-					area.setText(data);
-				}
-				catch(Exception ex){
-					System.out.println("ファイルエラー");
-				}
-
+			else if (n == 9) {
+				System.out.println("作業を終了します");
+				System.out.println("ありがとうございました");
+				break;
+			} else {
+				System.out.println("メニューに表示されている数値から選択して下さい");
+				continue;
 			}
-		});
-		JButton button8 = new JButton("テキストに保存");
-		button8.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				try{
-					BufferedWriter bw=new BufferedWriter(new FileWriter("C:/aaa/test4"+".txt"));
-					bw.write(area.getText().replace("\n","\r\n"));
-					bw.flush();
-				bw.close();
-				}
-				catch(IOException ex){
-					System.out.println("ファイルエラー");
-				}
+		}
 
-
-			}
-		});
-
-
-		bottomp.add(filemei);
-		bottomp.add(button1);
-		bottomp.add(button3);
-		bottomp.add(button4);
-		bottomp.add(button5);
-		bottomp.add(button6);
-		bottomp.add(button7);
-		bottomp.add(button8);
-
-
-
-
-		Container contentPane = getContentPane();
-		contentPane.add(p, BorderLayout.PAGE_START);
-		contentPane.add(bottomp, BorderLayout.CENTER);
 	}
 }
